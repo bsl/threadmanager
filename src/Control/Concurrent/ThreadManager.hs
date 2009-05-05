@@ -7,7 +7,7 @@
   Intended to be imported qualified (suggestion: TM).
  -}
 
-module Control.Concurrency.ThreadManager
+module Control.Concurrent.ThreadManager
   ( ThreadManager
   , ThreadStatus
   , make
