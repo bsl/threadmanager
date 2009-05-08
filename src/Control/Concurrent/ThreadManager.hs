@@ -2,7 +2,7 @@
   A simple thread management API inspired by the one in chapter
   24 of /Real World Haskell/.
 
-  See <http://book.realworldhaskell.org/read/concurrent-and-multicore-programming.html>
+  See <http://book.realworldhaskell.org/read/concurrent-and-multicore-programming.html>.
 
   Intended to be imported qualified (suggestion: TM).
  -}
