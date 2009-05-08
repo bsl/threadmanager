@@ -33,7 +33,7 @@ newtype ThreadManager = TM (MVar (M.Map ThreadId (MVar ThreadStatus)))
 make :: IO ThreadManager
 make = TM `fmap` newMVar M.empty
 
--- | Make a managed thread.
+-- | Make a managed thread. Uses 'forkIO'.
 fork :: ThreadManager -> IO () -> IO ThreadId
 fork (TM tm) action =
     modifyMVar tm $ \m -> do
