@@ -9,7 +9,7 @@
 
 module Control.Concurrent.ThreadManager
   ( ThreadManager
-  , ThreadStatus
+  , ThreadStatus (..)
   , make
   , fork, forkn, getStatus, waitFor, waitForAll
   ) where
