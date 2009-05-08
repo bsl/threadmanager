@@ -1,5 +1,5 @@
 name:         threadmanager
-version:      0.1
+version:      0.1.1
 license:      BSD3
 license-file: LICENSE
 author:       _Real World Haskell_, http://www.realworldhaskell.org/
