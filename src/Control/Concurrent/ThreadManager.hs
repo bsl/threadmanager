@@ -32,7 +32,6 @@ data ThreadManager = TM (MVar (M.Map ThreadId (MVar ThreadStatus))) (MVar (IO ()
 -- | Make a thread manager. This should be run in a thread that won't die.
 make :: IO ThreadManager
 make = do
- print "hiii"
  listenerMVar <- newEmptyMVar
  mvarMaps <- newMVar M.empty
  tm <- return $ TM mvarMaps listenerMVar
