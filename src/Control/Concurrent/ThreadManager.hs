@@ -26,16 +26,38 @@ data ThreadStatus =
   | Threw SomeException
   deriving Show
 
-newtype ThreadManager = TM (MVar (M.Map ThreadId (MVar ThreadStatus)))
+data ThreadManager = TM (MVar (M.Map ThreadId (MVar ThreadStatus))) (MVar (IO ()))
   deriving Eq
 
--- | Make a thread manager.
+-- | Make a thread manager. This should be run in a thread that won't die.
 make :: IO ThreadManager
-make = TM `fmap` newMVar M.empty
+make = do
+ print "hiii"
+ listenerMVar <- newEmptyMVar
+ mvarMaps <- newMVar M.empty
+ tm <- return $ TM mvarMaps listenerMVar
+ forkIO $ listen tm
+ return tm
+
+-- | This thread becomes the parent of all other threads.
+listen :: ThreadManager -> IO ()
+listen tm@(TM map listenerMVar) = do
+ command <- takeMVar listenerMVar
+ command
+ listen tm
+
+runCommand :: ThreadManager -> IO a -> IO a
+runCommand tm@(TM _ listenerMVar) command = do
+ resultMVar <- newEmptyMVar
+ putMVar listenerMVar (command >>= putMVar resultMVar)
+ takeMVar resultMVar
 
 -- | Make a managed thread. Uses 'forkIO'.
 fork :: ThreadManager -> IO () -> IO ThreadId
-fork (TM tm) action =
+fork tm action = runCommand tm (fork' tm action)
+
+fork' :: ThreadManager -> IO () -> IO ThreadId
+fork' (TM tm _) action =
     modifyMVar tm $ \m -> do
         state <- newEmptyMVar
         tid <- forkIO $ do
@@ -45,11 +67,16 @@ fork (TM tm) action =
 
 -- | Make the given number of managed threads.
 forkn :: ThreadManager -> Int -> IO () -> IO [ThreadId]
-forkn tm n = replicateM n . fork tm
+forkn tm n action = runCommand tm (forkn' tm n action)
+
+forkn' :: ThreadManager -> Int -> IO () -> IO [ThreadId]
+forkn' tm n = replicateM n . fork tm
 
 -- | Get the status of a managed thread.
 getStatus :: ThreadManager -> ThreadId -> IO (Maybe ThreadStatus)
-getStatus (TM tm) tid =
+getStatus tm tid = runCommand tm $ getStatus' tm tid
+getStatus' :: ThreadManager -> ThreadId -> IO (Maybe ThreadStatus)
+getStatus' (TM tm _) tid =
     modifyMVar tm $ \m ->
       case M.lookup tid m of
         Nothing    -> return (m, Nothing)
@@ -61,7 +88,10 @@ getStatus (TM tm) tid =
 
 -- | Block until a specific managed thread terminates.
 waitFor :: ThreadManager -> ThreadId -> IO (Maybe ThreadStatus)
-waitFor (TM tm) tid =
+waitFor tm tid = runCommand tm $ waitFor' tm tid
+
+waitFor' :: ThreadManager -> ThreadId -> IO (Maybe ThreadStatus)
+waitFor' (TM tm _) tid =
     join . modifyMVar tm $ \m ->
       return $
         case M.updateLookupWithKey (\_ _ -> Nothing) tid m of
@@ -70,7 +100,9 @@ waitFor (TM tm) tid =
 
 -- | Block until all managed threads terminate.
 waitForAll :: ThreadManager -> IO ()
-waitForAll (TM tm) =
+waitForAll tm = runCommand tm $ waitForAll' tm
+waitForAll' :: ThreadManager -> IO ()
+waitForAll' (TM tm _) =
     modifyMVar tm elems >>= mapM_ takeMVar
   where
     elems m = return (M.empty, M.elems m)
