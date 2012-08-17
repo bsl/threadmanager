@@ -15,9 +15,9 @@ module Control.Concurrent.ThreadManager
   ) where
 
 import Control.Concurrent      (ThreadId, forkIO)
-import Control.Concurrent.MVar (MVar, modifyMVar, newEmptyMVar, newMVar, putMVar, takeMVar, tryTakeMVar)
+import Control.Concurrent.MVar (MVar, modifyMVar, newEmptyMVar, newMVar, putMVar, takeMVar, tryTakeMVar,readMVar)
 import Control.Exception       (SomeException, try)
-import Control.Monad           (join, replicateM)
+import Control.Monad           (join, replicateM, when)
 import qualified Data.Map as M
 
 data ThreadStatus =
@@ -70,7 +70,15 @@ waitFor (TM tm) tid =
 
 -- | Block until all managed threads terminate.
 waitForAll :: ThreadManager -> IO ()
-waitForAll (TM tm) =
-    modifyMVar tm elems >>= mapM_ takeMVar
+waitForAll tm@(TM tmMvar) = do
+    threadMap <- readMVar tmMvar
+    let threads = M.keys threadMap
+    statuses <- mapM (getStatus tm) threads
+    _ <- mapM (waitFor tm) threads
+    Control.Monad.when (foldr checkStatus False statuses) $
+        waitForAll tm
   where
-    elems m = return (M.empty, M.elems m)
+    checkStatus :: Maybe ThreadStatus -> Bool -> Bool
+    checkStatus _ True = True
+    checkStatus (Just Running) False = True
+    checkStatus _ False = False
