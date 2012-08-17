@@ -32,4 +32,4 @@ thus saving GrandChildThread in the case of ChildThread's death.
 
 >grandChildThread :: Int ->  IO ()
 >grandChildThread count =
-> print count >> threadDelay 1000 >> (grandChildThread $ count+1)
+> print count >> threadDelay 1000 >> grandChildThread (count+1)
