@@ -24,7 +24,7 @@ build-type:    Simple
 library
     hs-source-dirs:  src
     exposed-modules: Control.Concurrent.ThreadManager
-    build-depends:   base == 4.*, containers >= 0.2.0.0 && <= 0.4.0.0
+    build-depends:   base >= 3 && < 5, containers
     ghc-options:     -Wall
     if impl(ghc >= 6.8)
         ghc-options: -fwarn-tabs
