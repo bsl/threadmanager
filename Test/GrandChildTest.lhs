@@ -4,7 +4,8 @@ ThreadMain
  ChildThread
   GrandChildThread
 
-And ChildThread ends?  Normally GrandChildThread dies.  This module tests whether ThreadManager successfully flattens this thread hierarchy to:
+And ChildThread ends? Normally GrandChildThread dies. This module tests whether
+ThreadManager successfully flattens this thread hierarchy to:
 
 ThreadMain
  ChildThread
@@ -30,6 +31,5 @@ thus saving GrandChildThread in the case of ChildThread's death.
 > return ()
 
 >grandChildThread :: Int ->  IO ()
->grandChildThread count = 
+>grandChildThread count =
 > print count >> threadDelay 1000 >> (grandChildThread $ count+1)
-

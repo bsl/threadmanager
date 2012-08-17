@@ -15,7 +15,7 @@ module Control.Concurrent.ThreadManager
   ) where
 
 import Control.Concurrent      (ThreadId, forkIO)
-import Control.Concurrent.MVar (MVar, modifyMVar, newEmptyMVar, newMVar, putMVar, takeMVar, tryTakeMVar,readMVar)
+import Control.Concurrent.MVar (MVar, modifyMVar, newEmptyMVar, newMVar, putMVar, takeMVar, tryTakeMVar, readMVar)
 import Control.Exception       (SomeException, try)
 import Control.Monad           (join, replicateM, when)
 import qualified Data.Map as M
