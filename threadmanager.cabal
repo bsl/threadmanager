@@ -1,5 +1,5 @@
 name:         threadmanager
-version:      0.1.6
+version:      0.1.7
 category:     Concurrency
 
 author:       _Real World Haskell_, http://www.realworldhaskell.org/
