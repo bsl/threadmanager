@@ -10,11 +10,11 @@ license-file: LICENSE
 
 synopsis:     (deprecated in favor of 'threads') Simple thread management
 description:
-  This package is useful, but deprecated. In new code, please use /threads/
-  instead. See <http://hackage.haskell.org/package/threads>.
+  This package is useful, but deprecated. In new code, please use
+  <http://hackage.haskell.org/package/threads threads> instead.
   .
-  A simple thread management API inspired by the one in chapter 24 of
-  /Real World Haskell/. See <http://book.realworldhaskell.org/read/concurrent-and-multicore-programming.html>.
+  A simple thread management API inspired by the one in
+  <http://book.realworldhaskell.org/read/concurrent-and-multicore-programming.html chapter 24 of Real World Haskell>.
 
 cabal-version: >= 1.10
 build-type:    Simple

@@ -1,11 +1,8 @@
-{-|
-  A simple thread management API inspired by the one in chapter
-  24 of /Real World Haskell/.
-
-  See <http://book.realworldhaskell.org/read/concurrent-and-multicore-programming.html>.
-
-  Intended to be imported qualified (suggestion: TM).
- -}
+-- | Intended to be imported qualified, as in
+--
+-- @
+-- import qualified Control.Concurrent.ThreadManager as TM
+-- @
 
 module Control.Concurrent.ThreadManager
   ( ThreadManager
